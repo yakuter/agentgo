@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = ".;pb";
+
+message Command {
+  string app = 1 [json_name="App"];
+  string args = 2 [json_name="Args"]; 
+  string result = 3 [json_name="Result"]; 
+}
+
+service CommandService {
+	rpc Send (CommandRequest) returns (CommandResponse);
+}
+
+// The request message containing the user's name.
+message CommandRequest {
+  string app = 1;
+  repeated string args = 2;
+}
+
+// The response message containing the greetings
+message CommandResponse {
+  string result = 1;
+}
