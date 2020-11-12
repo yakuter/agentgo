@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os"
 	"time"
 
 	"github.com/yakuter/agentgo/pb"
@@ -26,13 +27,36 @@ func (i *arrayFlags) Set(value string) error {
 	return nil
 }
 
+func usage() {
+	log.Printf("Usage: agentgo-server [-app application] [-arg argument] \n")
+	flag.PrintDefaults()
+}
+
+func showUsageAndExit(exitcode int) {
+	usage()
+	os.Exit(exitcode)
+}
+
 func main() {
 	var app string
+	var showHelp bool
 	var args arrayFlags
 
 	flag.StringVar(&app, "app", "", "Application to execute command: ls")
+	flag.BoolVar(&showHelp, "h", false, "Show help message")
 	flag.Var(&args, "arg", "Arguments for application: -lah")
+
+	log.SetFlags(0)
+	flag.Usage = usage
 	flag.Parse()
+
+	if showHelp {
+		showUsageAndExit(0)
+	}
+
+	if app == "" {
+		showUsageAndExit(1)
+	}
 
 	// Set up a connection to the server.
 	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
@@ -45,7 +69,7 @@ func main() {
 	c := pb.NewCommandServiceClient(conn)
 
 	// Create the context
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	// Generate app and arguments to send

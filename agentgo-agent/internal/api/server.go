@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/yakuter/agentgo/agent/internal/app"
+	"github.com/yakuter/agentgo/agentgo-agent/internal/app"
 	"github.com/yakuter/agentgo/pb"
 )
 

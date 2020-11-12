@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/yakuter/agentgo/agent/internal/api"
+	"github.com/yakuter/agentgo/agentgo-agent/internal/api"
 	"github.com/yakuter/agentgo/pb"
 
 	"google.golang.org/grpc"
