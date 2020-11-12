@@ -5,8 +5,10 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
+	"github.com/yakuter/agentgo/agentgo-server/internal/config"
 	"github.com/yakuter/agentgo/pb"
 
 	"google.golang.org/grpc"
@@ -16,46 +18,20 @@ const (
 	address = "localhost:50051"
 )
 
-type arrayFlags []string
-
-func (i *arrayFlags) String() string {
-	return "my string representation"
-}
-
-func (i *arrayFlags) Set(value string) error {
-	*i = append(*i, value)
-	return nil
-}
-
-func usage() {
-	log.Printf("Usage: agentgo-server [-app application] [-arg argument] \n")
-	flag.PrintDefaults()
-}
-
-func showUsageAndExit(exitcode int) {
-	usage()
-	os.Exit(exitcode)
-}
-
 func main() {
-	var app string
-	var showHelp bool
-	var args arrayFlags
 
-	flag.StringVar(&app, "app", "", "Application to execute command: ls")
-	flag.BoolVar(&showHelp, "h", false, "Show help message")
-	flag.Var(&args, "arg", "Arguments for application: -lah")
+	// Create a FlagSet and sets the usage
+	fs := flag.NewFlagSet(filepath.Base(os.Args[0]), flag.ExitOnError)
 
-	log.SetFlags(0)
-	flag.Usage = usage
-	flag.Parse()
-
-	if showHelp {
-		showUsageAndExit(0)
+	// Configure the options from the flags/config file
+	opts, err := config.ConfigureOptions(fs, os.Args[1:])
+	if err != nil {
+		config.PrintUsageErrorAndDie(err)
 	}
 
-	if app == "" {
-		showUsageAndExit(1)
+	// If -help flag is defined, print help
+	if opts.ShowHelp {
+		config.PrintHelpAndDie()
 	}
 
 	// Set up a connection to the server.
@@ -74,8 +50,8 @@ func main() {
 
 	// Generate app and arguments to send
 	command := pb.CommandRequest{
-		App:  app,
-		Args: args,
+		App:  opts.App,
+		Args: opts.Args,
 	}
 
 	// Send command
