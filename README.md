@@ -4,7 +4,6 @@ Hi! Agentgo is a tool for making remote command executions with **golang**, **pr
 
 ### Demo
 You can watch a demo about how agentgo works.  
-https://www.youtube.com/watch?v=kuIA8ic2cf8
 [![DEMO](https://img.youtube.com/vi/kuIA8ic2cf8/0.jpg)](https://www.youtube.com/watch?v=kuIA8ic2cf8)
 
   
